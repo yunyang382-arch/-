@@ -1,0 +1,307 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基本面分析与市场策略 - 结构化笔记</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <script src="https://unpkg.com/framer-motion@10.12.16/dist/framer-motion.js"></script>
+    
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#356BFD',
+                        secondary: '#EAEFFB',
+                        accent: '#FB9D0E',
+                        bgBase: '#FAFBFC',
+                    },
+                    fontFamily: {
+                        sans: ['PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FAFBFC;
+            /* 科技感网格背景 */
+            background-image: linear-gradient(#EAEFFB 1px, transparent 1px),
+            linear-gradient(90deg, #EAEFFB 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .text-vertical {
+            writing-mode: vertical-rl;
+        }
+        /* 隐藏滚动条，为了截图更干净 */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { motion } = window.Motion;
+
+        // 动画变体
+        const containerVariants = {
+            hidden: { opacity: 0 },
+            visible: { 
+                opacity: 1,
+                transition: { staggerChildren: 0.1 }
+            }
+        };
+
+        const itemVariants = {
+            hidden: { y: 20, opacity: 0 },
+            visible: { 
+                y: 0, 
+                opacity: 1, 
+                transition: { type: "spring", stiffness: 50 }
+            }
+        };
+
+        const Card = ({ children, className = "", span = "col-span-1" }) => (
+            <motion.div 
+                variants={itemVariants}
+                className={`bg-white rounded-2xl p-6 shadow-sm border border-gray-100 relative overflow-hidden ${span} ${className}`}
+            >
+                {/* 顶部高光渐变 */}
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-transparent opacity-50"></div>
+                {children}
+            </motion.div>
+        );
+
+        const Badge = ({ text, color = "bg-secondary text-primary" }) => (
+            <span className={`px-2 py-1 rounded-md text-xs font-bold tracking-wider ${color}`}>
+                {text}
+            </span>
+        );
+
+        const App = () => {
+            return (
+                <div className="max-w-md mx-auto min-h-screen pb-12 overflow-hidden">
+                    <motion.div 
+                        initial="hidden"
+                        animate="visible"
+                        variants={containerVariants}
+                        className="px-4 pt-8 grid grid-cols-2 gap-4"
+                    >
+                        {/* Header Section */}
+                        <div className="col-span-2 mb-4">
+                            <motion.div variants={itemVariants} className="flex justify-between items-end border-b-4 border-black pb-2">
+                                <div>
+                                    <h1 className="text-4xl font-black text-black tracking-tighter leading-none">
+                                        主要<br/>矛盾
+                                    </h1>
+                                    <p className="text-primary font-bold mt-1 tracking-widest text-xs">MARKET ANALYSIS</p>
+                                </div>
+                                <div className="text-right">
+                                    <div className="text-5xl font-black text-gray-200 leading-none">01</div>
+                                    <div className="text-xs font-bold bg-black text-white px-2 py-1 inline-block mt-1">VOL.2025</div>
+                                </div>
+                            </motion.div>
+                            <p className="mt-4 text-sm text-gray-500 font-medium leading-relaxed">
+                                <span className="text-accent font-bold">核心心法：</span> 做交易不是做生意。基本面分析不需要面面俱到，只需抓住“主要矛盾”。
+                            </p>
+                        </div>
+
+                        {/* Concept Card: The Core Logic */}
+                        <Card span="col-span-2" className="bg-gradient-to-br from-primary to-blue-600 text-white">
+                            <div className="flex justify-between items-start">
+                                <i className="fa-solid fa-scale-unbalanced text-4xl opacity-80"></i>
+                                <div className="text-right opacity-80 text-xs font-mono">CORE LOGIC</div>
+                            </div>
+                            <div className="mt-6">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <span className="text-2xl font-bold">矛盾大</span>
+                                    <i className="fa-solid fa-arrow-right text-sm opacity-60"></i>
+                                    <span className="text-lg opacity-90">分歧大/震荡</span>
+                                </div>
+                                <div className="w-full h-px bg-white/20 my-2"></div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-2xl font-bold text-accent">矛盾小</span>
+                                    <i className="fa-solid fa-arrow-right text-sm opacity-60"></i>
+                                    <span className="text-lg opacity-90">共识强/单边</span>
+                                </div>
+                            </div>
+                            <div className="mt-4 text-sm bg-white/10 p-3 rounded-lg backdrop-blur-sm border border-white/10">
+                                <strong>背离定律：</strong> 当“现实端”与“资金端”背离时，股价跟随<span className="text-accent font-bold underline decoration-2 underline-offset-2">资本市场的逻辑</span>。
+                            </div>
+                        </Card>
+
+                        {/* Section Title */}
+                        <div className="col-span-2 mt-4 flex items-center gap-2">
+                            <div className="w-2 h-2 bg-accent rounded-full"></div>
+                            <h2 className="text-lg font-black text-gray-800">行业矛盾图谱</h2>
+                        </div>
+
+                        {/* Bento Item: US Tech */}
+                        <Card span="col-span-2">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <h3 className="text-xl font-bold text-gray-900">美国科技/AI</h3>
+                                    <p className="text-xs text-gray-400 mt-1">US TECH SECTOR</p>
+                                </div>
+                                <i className="fa-solid fa-microchip text-primary text-2xl"></i>
+                            </div>
+                            <div className="mt-4 bg-secondary/50 rounded-lg p-3">
+                                <div className="flex justify-between text-xs font-bold mb-1 text-gray-500">
+                                    <span>应用落地 (弱)</span>
+                                    <span className="text-primary">资本开支 (强)</span>
+                                </div>
+                                <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden flex">
+                                    <div className="w-1/4 bg-gray-400"></div>
+                                    <div className="w-3/4 bg-primary"></div>
+                                </div>
+                            </div>
+                            <p className="mt-3 text-xs text-gray-600 leading-relaxed">
+                                市场不关心应用（App）是否落地，只关心巨头是否在<span className="font-bold text-primary">烧钱买芯片/建基建</span>。只要Capex扩张，故事就能继续。
+                            </p>
+                        </Card>
+
+                        {/* Bento Item: Real Estate */}
+                        <Card>
+                            <i className="fa-solid fa-building-columns text-accent text-2xl mb-2"></i>
+                            <h3 className="text-lg font-bold text-gray-900">房地产</h3>
+                            <div className="my-2 border-l-2 border-accent pl-2">
+                                <p className="text-xs font-bold text-gray-400">关注</p>
+                                <p className="text-sm font-bold text-gray-800">政策博弈</p>
+                            </div>
+                            <div className="my-2 border-l-2 border-gray-200 pl-2">
+                                <p className="text-xs font-bold text-gray-400">忽略</p>
+                                <p className="text-xs text-gray-500 line-through">库存数据</p>
+                            </div>
+                            <p className="text-[10px] text-gray-500 mt-2">
+                                行情多为脉冲式，跟随重要会议节奏。
+                            </p>
+                        </Card>
+
+                        {/* Bento Item: Cyclical */}
+                        <Card>
+                            <i className="fa-solid fa-recycle text-green-600 text-2xl mb-2"></i>
+                            <h3 className="text-lg font-bold text-gray-900">周期股</h3>
+                            <div className="mt-2 text-center">
+                                <div className="text-2xl font-black text-gray-200">SUPPLY</div>
+                                <div className="text-sm font-bold text-gray-800 -mt-4 relative z-10 bg-white/80 inline-block px-1">
+                                    重供给<br/>轻需求
+                                </div>
+                            </div>
+                            <p className="text-[10px] text-gray-500 mt-3 leading-tight">
+                                核心看供给侧改革（反内卷）、停产保价、产能出清。
+                            </p>
+                        </Card>
+
+                         {/* Bento Item: Metals */}
+                         <Card span="col-span-2">
+                            <div className="flex gap-4">
+                                <div className="flex-1">
+                                    <h3 className="text-lg font-bold text-gray-900 mb-2">金属逻辑</h3>
+                                    <div className="space-y-2">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-8 h-8 rounded-full bg-[#B87333]/20 flex items-center justify-center text-[#B87333] font-bold text-xs">Cu</div>
+                                            <div className="text-xs">
+                                                <span className="font-bold">铜：</span>电力设备更新 + AI能耗
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-8 h-8 rounded-full bg-gray-300/40 flex items-center justify-center text-gray-600 font-bold text-xs">Ag</div>
+                                            <div className="text-xs">
+                                                <span className="font-bold">银：</span>极低库存 + 光伏需求 = <span className="text-accent font-bold">逼仓</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="w-1/3 flex flex-col justify-center items-center border-l border-dashed border-gray-200">
+                                    <i className="fa-solid fa-chart-line text-2xl text-primary"></i>
+                                    <span className="text-[10px] text-gray-400 mt-1">资金定价</span>
+                                </div>
+                            </div>
+                        </Card>
+
+                        {/* Section Title */}
+                        <div className="col-span-2 mt-4 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 bg-primary rounded-full"></div>
+                                <h2 className="text-lg font-black text-gray-800">交易策略</h2>
+                            </div>
+                            <span className="text-xs font-mono text-gray-400">STRATEGY</span>
+                        </div>
+
+                        {/* Strategy Timeline */}
+                        <Card span="col-span-2" className="bg-[#1a1a1a] text-white border-none">
+                            <div className="relative pl-6 border-l border-gray-700 space-y-6 py-2">
+                                {/* Item 1 */}
+                                <div className="relative">
+                                    <div className="absolute -left-[31px] top-1 w-4 h-4 bg-accent rounded-full border-2 border-[#1a1a1a]"></div>
+                                    <h4 className="text-accent font-bold text-sm mb-1">当前窗口 (12月-1月)</h4>
+                                    <p className="text-xs text-gray-400">机构调仓期。适合埋伏配置，不追高。通过对冲持股过节。</p>
+                                </div>
+                                {/* Item 2 */}
+                                <div className="relative">
+                                    <div className="absolute -left-[31px] top-1 w-4 h-4 bg-primary rounded-full border-2 border-[#1a1a1a]"></div>
+                                    <h4 className="text-primary font-bold text-sm mb-1">仓位配置</h4>
+                                    <div className="flex gap-2 mt-2">
+                                        <div className="bg-white/10 px-3 py-2 rounded text-xs flex-1">
+                                            <div className="font-bold text-white">科技类</div>
+                                            <div className="text-gray-400 scale-90 origin-left">1-2个细分</div>
+                                        </div>
+                                        <div className="bg-white/10 px-3 py-2 rounded text-xs flex-1">
+                                            <div className="font-bold text-white">传统类</div>
+                                            <div className="text-gray-400 scale-90 origin-left">1-2个细分</div>
+                                        </div>
+                                    </div>
+                                    <p className="text-[10px] text-gray-500 mt-2 italic">*切忌撒胡椒面式配置</p>
+                                </div>
+                            </div>
+                        </Card>
+
+                        {/* Mental Model / Footer */}
+                        <Card span="col-span-2" className="bg-secondary border-primary/20">
+                            <div className="flex items-center gap-4">
+                                <div className="text-4xl text-primary">
+                                    <i className="fa-solid fa-brain"></i>
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-gray-800">心态管理</h3>
+                                    <p className="text-xs text-gray-600 mt-1">
+                                        不要总盯着最亮的那颗星（如商业航天）。<br/>
+                                        <span className="text-primary font-bold">若未持有最热板块，守好自己的主要矛盾也能赚钱。</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </Card>
+
+                        <div className="col-span-2 text-center py-6">
+                            <div className="text-xs text-gray-400 font-mono tracking-widest uppercase">
+                                Generated by Gemini AI
+                            </div>
+                            <div className="w-8 h-1 bg-gray-200 mx-auto mt-2 rounded-full"></div>
+                        </div>
+
+                    </motion.div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

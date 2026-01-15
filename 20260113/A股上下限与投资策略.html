@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A股深度观察：上限与下限</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bg: '#FAFBFC',
+                        primary: '#356BFD',
+                        secondary: '#EAEFFB',
+                        accent: '#FB9D0E',
+                        dark: '#1a1a1a',
+                        light: '#ffffff'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'tech-grid': "radial-gradient(#CFD8DC 1px, transparent 1px)",
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FAFBFC;
+            background-size: 20px 20px;
+            background-image: radial-gradient(#E2E8F0 1px, transparent 1px);
+        }
+        
+        .bento-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px -10px rgba(53, 107, 253, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .gradient-blue {
+            background: linear-gradient(180deg, rgba(53, 107, 253, 0.08) 0%, rgba(53, 107, 253, 0) 100%);
+        }
+
+        .gradient-orange {
+            background: linear-gradient(180deg, rgba(251, 157, 14, 0.08) 0%, rgba(251, 157, 14, 0) 100%);
+        }
+
+        /* Custom Scrollbar for clean look */
+        ::-webkit-scrollbar {
+            width: 0px;
+        }
+
+        /* Typography Highlights */
+        .big-number {
+            font-size: 4rem;
+            line-height: 1;
+            letter-spacing: -2px;
+            font-weight: 900;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Simple Entrance Animation */
+        .fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen flex justify-center">
+
+    <div class="w-full max-w-md bg-bg relative pb-12">
+        
+        <header class="p-6 pt-10 fade-in-up">
+            <div class="inline-block px-3 py-1 bg-primary text-white text-xs font-bold tracking-widest rounded-full mb-4 uppercase">
+                Market Insights
+            </div>
+            <h1 class="text-5xl font-black text-gray-900 leading-tight mb-2">
+                A股的<br>
+                <span class="text-primary">上限</span>与<span class="text-accent">下限</span>
+            </h1>
+            <p class="text-gray-500 font-medium text-lg mt-2 flex items-center gap-2">
+                <i class="fa-solid fa-bolt text-accent"></i> 能人择时，普通人择股
+            </p>
+        </header>
+
+        <main class="px-4 space-y-4">
+
+            <div class="bento-card p-6 gradient-blue fade-in-up delay-100 border border-secondary">
+                <div class="flex justify-between items-start mb-2">
+                    <h2 class="section-title text-primary"><i class="fa-solid fa-water"></i> 市场下限</h2>
+                    <i class="fa-solid fa-arrow-trend-down text-primary/30 text-4xl absolute right-4 top-4"></i>
+                </div>
+                <p class="text-gray-500 text-sm font-bold mb-1">关键指标：日成交额</p>
+                <div class="big-number text-gray-900 mb-2">1.5<span class="text-3xl">万亿</span></div>
+                
+                <div class="bg-white/60 rounded-xl p-4 backdrop-blur-sm border border-white/50">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-sm font-bold text-gray-700">温和放量 (中枢上移)</span>
+                    </div>
+                    <div class="h-1 w-full bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-primary w-3/4"></div>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex items-start gap-3">
+                    <div class="text-red-500 bg-red-50 p-2 rounded-lg">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 font-bold uppercase">Danger Zone</p>
+                        <p class="text-sm font-bold text-gray-800">4000亿 - 6000亿</p>
+                        <p class="text-xs text-gray-500 leading-tight mt-1">流动性枯竭深不见底，少量卖单即砸坑。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bento-card p-6 gradient-orange fade-in-up delay-200 border border-orange-100">
+                <h2 class="section-title text-accent"><i class="fa-solid fa-cloud-arrow-up"></i> 市场上限</h2>
+                <p class="text-gray-500 text-sm mb-4">由三大核心要素共同决定</p>
+
+                <div class="space-y-3">
+                    <div class="flex items-center gap-4">
+                        <div class="text-4xl font-black text-accent opacity-20">01</div>
+                        <div class="flex-1">
+                            <h3 class="font-bold text-lg text-gray-900">政策/宏观预期</h3>
+                            <p class="text-xs text-gray-500">最重要。预期先行，利好兑现即高点。</p>
+                        </div>
+                    </div>
+                    <div class="h-px bg-gray-200 w-full"></div>
+                    
+                    <div class="flex items-center gap-4">
+                        <div class="text-4xl font-black text-gray-300 opacity-40">02</div>
+                        <div class="flex-1">
+                            <h3 class="font-bold text-gray-900">主线题材</h3>
+                            <p class="text-xs text-gray-500">需宏大叙事容纳大资金 (如AI/中特估)。</p>
+                        </div>
+                    </div>
+                    <div class="h-px bg-gray-200 w-full"></div>
+
+                    <div class="flex items-center gap-4">
+                        <div class="text-4xl font-black text-gray-300 opacity-40">03</div>
+                        <div class="flex-1">
+                            <h3 class="font-bold text-gray-900">经济基本面</h3>
+                            <p class="text-xs text-gray-500">短期难以验证，影响长期权重。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bento-card p-6 fade-in-up delay-300">
+                <div class="flex justify-between items-end mb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">择时 vs 择股</h2>
+                        <p class="text-xs text-gray-500 mt-1">普通人的生存法则</p>
+                    </div>
+                    <div class="bg-secondary text-primary px-3 py-1 rounded-lg text-xs font-bold">
+                        长期策略
+                    </div>
+                </div>
+                
+                <div class="h-40 w-full bg-gray-50 rounded-xl relative p-2 border border-gray-100 flex items-center justify-center">
+                    <canvas id="strategyChart"></canvas>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mt-4">
+                    <div class="bg-red-50 p-3 rounded-xl border border-red-100">
+                        <div class="text-red-500 text-lg mb-1"><i class="fa-solid fa-xmark"></i> 🚫</div>
+                        <div class="font-bold text-gray-900 text-sm">极致择时</div>
+                        <p class="text-xs text-gray-500 mt-1">博弈短期波动<br>容易左右挨打</p>
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
+                        <div class="text-primary text-lg mb-1"><i class="fa-solid fa-check"></i> ✅</div>
+                        <div class="font-bold text-gray-900 text-sm">模糊正确</div>
+                        <p class="text-xs text-gray-500 mt-1">长期向上品种<br>定投分批配置</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 fade-in-up delay-400">
+                <div class="bento-card p-4 bg-white border border-gray-100">
+                    <i class="fa-solid fa-building text-accent text-2xl mb-2"></i>
+                    <h3 class="font-bold text-gray-900">房地产</h3>
+                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">博弈会议政策，利好兑现即走，不宜恋战。</p>
+                </div>
+
+                <div class="bento-card p-4 bg-white border border-gray-100">
+                    <i class="fa-solid fa-jet-fighter text-gray-800 text-2xl mb-2"></i>
+                    <h3 class="font-bold text-gray-900">军工</h3>
+                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">地缘政治驱动，波动极快，"渣男"属性。</p>
+                </div>
+
+                <div class="bento-card p-4 bg-white border border-gray-100">
+                    <i class="fa-solid fa-chart-line text-primary text-2xl mb-2"></i>
+                    <h3 class="font-bold text-gray-900">券商</h3>
+                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">牛市旗手。看成交额，1.5万亿+有机会。</p>
+                </div>
+
+                <div class="bento-card p-4 bg-white border border-gray-100">
+                    <i class="fa-solid fa-industry text-purple-500 text-2xl mb-2"></i>
+                    <h3 class="font-bold text-gray-900">设备更新</h3>
+                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">财政资金流向，行业不内卷，政策引导。</p>
+                </div>
+            </div>
+
+            <div class="bento-card bg-gray-900 p-6 text-white fade-in-up delay-400 mt-2">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <div class="font-bold text-lg">核心总结</div>
+                </div>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    放弃"一夜暴富"和"精准抄底"的幻想。选择<span class="text-white font-bold">红利</span>或<span class="text-white font-bold">宽基指数</span>，在大跌时多买，利用时间换空间。
+                </p>
+                <div class="mt-6 pt-6 border-t border-gray-800 flex justify-between items-center text-xs text-gray-500 uppercase tracking-widest">
+                    <span>Stock Market Note</span>
+                    <span>2026 Edition</span>
+                </div>
+            </div>
+
+        </main>
+        
+        <div class="fixed top-0 left-0 w-full h-full pointer-events-none z-[-1] opacity-50">
+            <div class="absolute top-[-10%] right-[-20%] w-[300px] h-[300px] bg-primary rounded-full mix-blend-multiply filter blur-[100px] opacity-10"></div>
+            <div class="absolute bottom-[20%] left-[-10%] w-[250px] h-[250px] bg-accent rounded-full mix-blend-multiply filter blur-[80px] opacity-10"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Initialize Chart.js for the "Strategy" visualization
+        const ctx = document.getElementById('strategyChart').getContext('2d');
+        const strategyChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: '市场波动',
+                    data: [12, 19, 3, 5, 2, 3],
+                    borderColor: '#E2E8F0',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    pointRadius: 0,
+                    tension: 0.4,
+                    fill: false
+                },
+                {
+                    label: '定投收益',
+                    data: [5, 8, 10, 12, 15, 18],
+                    borderColor: '#356BFD',
+                    backgroundColor: 'rgba(53, 107, 253, 0.1)',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#356BFD',
+                    pointRadius: 4,
+                    tension: 0.2,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                },
+                scales: {
+                    x: {
+                        display: false
+                    },
+                    y: {
+                        display: false,
+                        min: 0
+                    }
+                },
+                animation: {
+                    duration: 2000,
+                    easing: 'easeOutQuart'
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>行情梯队与阶层跃迁 - 深度笔记</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;500;700;900&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#356BFD',
+                        secondary: '#EAEFFB',
+                        accent: '#FB9D0E',
+                        bg: '#FAFBFC',
+                        dark: '#0f172a'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'tech-grid': "linear-gradient(to right, #E2E8F0 1px, transparent 1px), linear-gradient(to bottom, #E2E8F0 1px, transparent 1px)",
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FAFBFC;
+            background-size: 40px 40px;
+            font-family: 'Noto Sans SC', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .tech-grid-bg {
+            background-image: linear-gradient(#E5E7EB 1px, transparent 1px),
+            linear-gradient(90deg, #E5E7EB 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px -8px rgba(53, 107, 253, 0.08);
+        }
+
+        .text-gradient-primary {
+            background: linear-gradient(135deg, #356BFD 0%, #1e40af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-gradient-accent {
+            background: linear-gradient(135deg, #FB9D0E 0%, #c2410c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Hide scrollbar */
+        ::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="tech-grid-bg min-h-screen text-slate-800 pb-20">
+
+    <div id="root" class="max-w-[480px] mx-auto relative overflow-hidden bg-[#FAFBFC]/95 shadow-2xl min-h-screen"></div>
+
+    <script type="text/babel">
+        const { motion } = window.Motion;
+        const { createRoot } = window.ReactDOM;
+        const { useState, useEffect, useRef } = window.React;
+
+        const BentoItem = ({ children, className, delay = 0 }) => {
+            return (
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: delay, ease: [0.22, 1, 0.36, 1] }}
+                    className={`glass-card rounded-[1.5rem] p-5 relative overflow-hidden ${className}`}
+                >
+                    {children}
+                </motion.div>
+            );
+        };
+
+        const Tag = ({ text, color = "primary" }) => (
+            <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-${color}/10 text-${color} border border-${color}/20`}>
+                {text}
+            </span>
+        );
+
+        const App = () => {
+            const chartRef = useRef(null);
+
+            useEffect(() => {
+                if (chartRef.current) {
+                    const ctx = chartRef.current.getContext('2d');
+                    new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['传统/宽基 (高配)', '港美科技 (中配)', 'A股科技 (低配)'],
+                            datasets: [{
+                                data: [50, 30, 20],
+                                backgroundColor: ['#356BFD', '#FB9D0E', '#E2E8F0'],
+                                borderWidth: 0,
+                                hoverOffset: 4
+                            }]
+                        },
+                        options: {
+                            cutout: '75%',
+                            responsive: true,
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                }
+            }, []);
+
+            return (
+                <div className="grid grid-cols-2 gap-3 p-4 pt-12">
+                    
+                    {/* Header */}
+                    <motion.header 
+                        initial={{ opacity: 0 }} 
+                        animate={{ opacity: 1 }} 
+                        transition={{ duration: 0.8 }}
+                        className="col-span-2 mb-6 px-2"
+                    >
+                        <div className="flex items-center gap-2 mb-3">
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                            <span className="text-[10px] font-bold tracking-[0.3em] text-slate-400 uppercase">OCTOBER STRATEGY</span>
+                        </div>
+                        <h1 className="text-5xl font-black leading-[0.9] text-slate-900 mb-3 tracking-tight">
+                            行情<span className="text-gradient-primary">梯队</span><br/>
+                            <span className="text-2xl font-light text-slate-400">& 阶层跃迁</span>
+                        </h1>
+                        <p className="text-sm font-bold text-slate-600 border-l-4 border-accent pl-3 mt-4 leading-relaxed">
+                            变盘在即，识别科技梯队节奏<br/>
+                            <span className="text-[10px] font-normal text-slate-400">基于龙哥音频深度解析 </span>
+                        </p>
+                    </motion.header>
+
+                    {/* 01. Market Outlook (Full Width) */}
+                    <BentoItem className="col-span-2" delay={0.1}>
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-secondary rounded-full -mr-10 -mt-10 blur-3xl opacity-60"></div>
+                        <div className="flex justify-between items-start mb-2">
+                            <h2 className="text-xl font-black text-slate-800">十月变盘</h2>
+                            <span className="text-4xl font-black text-slate-100">01</span>
+                        </div>
+                        <p className="text-xs text-slate-500 mb-3 font-medium">9月磨底结束，10月方向选择。</p>
+                        <div className="flex gap-2">
+                            <div className="flex-1 bg-white/50 p-2 rounded-xl text-center border border-white">
+                                <i className="fa-solid fa-arrow-trend-up text-primary text-xl mb-1"></i>
+                                <div className="text-[10px] font-bold text-slate-600">大概率向上</div>
+                            </div>
+                            <div className="flex-1 bg-white/50 p-2 rounded-xl text-center border border-white">
+                                <i className="fa-solid fa-gavel text-accent text-xl mb-1"></i>
+                                <div className="text-[10px] font-bold text-slate-600">管制 > 自由</div>
+                            </div>
+                        </div>
+                        <p className="text-[10px] text-slate-400 mt-2 leading-tight">
+                            *龙哥（监管）意在“慢牛”保护中小散户，尚未进入“自由疯牛”阶段。
+                        </p>
+                    </BentoItem>
+
+                    {/* 02. The Core Strategy: Tech Tiers (Vertical Tall) */}
+                    <BentoItem className="col-span-1 row-span-2 bg-slate-900 text-white border-slate-800" delay={0.2}>
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">CORE TACTICS</h3>
+                            <i className="fa-solid fa-layer-group text-primary"></i>
+                        </div>
+                        
+                        <h2 className="text-2xl font-black mb-1">科技<br/>梯队战法</h2>
+                        <div className="w-8 h-1 bg-accent mb-6"></div>
+
+                        <div className="space-y-6 relative">
+                            {/* Vertical Line */}
+                            <div className="absolute left-1.5 top-2 bottom-2 w-0.5 bg-slate-700"></div>
+
+                            {/* Tier 1 */}
+                            <div className="relative pl-6">
+                                <div className="absolute left-0 top-1.5 w-3.5 h-3.5 bg-slate-800 border-2 border-slate-500 rounded-full z-10"></div>
+                                <div className="text-[10px] text-slate-400 mb-0.5">最早启动 (6-7月)</div>
+                                <div className="text-sm font-black text-slate-300">第一梯队</div>
+                                <div className="text-[10px] text-slate-500 mt-1 leading-tight">中际、胜宏、美光、腾讯</div>
+                                <Tag text="疲软/休整" color="slate-500" />
+                            </div>
+
+                            {/* Tier 2 */}
+                            <div className="relative pl-6">
+                                <div className="absolute left-0 top-1.5 w-3.5 h-3.5 bg-primary border-2 border-primary rounded-full z-10 shadow-[0_0_10px_#356BFD]"></div>
+                                <div className="text-[10px] text-primary mb-0.5 font-bold">爆发最强 (8月)</div>
+                                <div className="text-xl font-black text-white">第二梯队</div>
+                                <div className="text-[10px] text-slate-400 mt-1 leading-tight">寒武纪、海光、存储</div>
+                                <Tag text="当前主线" color="primary" />
+                            </div>
+
+                            {/* Tier 3 */}
+                            <div className="relative pl-6">
+                                <div className="absolute left-0 top-1.5 w-3.5 h-3.5 bg-accent border-2 border-accent rounded-full z-10"></div>
+                                <div className="text-[10px] text-accent mb-0.5">补涨扩散 (9月+)</div>
+                                <div className="text-sm font-black text-slate-300">第三梯队</div>
+                                <div className="text-[10px] text-slate-500 mt-1 leading-tight">江波龙、纯题材小票</div>
+                                <Tag text="快进快出" color="accent" />
+                            </div>
+                        </div>
+
+                        <div className="mt-6 p-3 bg-white/10 rounded-xl backdrop-blur-md border border-white/10">
+                            <p className="text-[10px] text-slate-300 font-bold mb-1">
+                                <i className="fa-solid fa-rotate mr-1 text-primary"></i> 摇摆策略
+                            </p>
+                            <p className="text-[8px] text-slate-400 leading-relaxed">
+                                第一梯队休息时 -> 做第二/三梯队。<br/>
+                                故事讲完后 -> 资金回流救第一梯队。
+                            </p>
+                        </div>
+                    </BentoItem>
+
+                    {/* 03. Valuation Warning (Square) */}
+                    <BentoItem className="col-span-1" delay={0.3}>
+                        <h3 className="text-xs font-bold text-slate-400 uppercase mb-2">估值真相</h3>
+                        <div className="flex flex-col gap-2">
+                            <div>
+                                <span className="text-[10px] font-bold text-slate-500 block">A股科技</span>
+                                <span className="text-lg font-black text-accent">不可描述</span>
+                                <p className="text-[8px] text-slate-400">纯讲故事 / 市梦率</p>
+                            </div>
+                            <div className="h-px bg-slate-100 w-full"></div>
+                            <div>
+                                <span className="text-[10px] font-bold text-slate-500 block">港/美科技</span>
+                                <span className="text-lg font-black text-primary">业绩支撑</span>
+                                <p className="text-[8px] text-slate-400">腾讯~20PE / 美股~50PE</p>
+                            </div>
+                        </div>
+                    </BentoItem>
+
+                    {/* 04. High-Low Switch (Square) */}
+                    <BentoItem className="col-span-1 bg-white" delay={0.4}>
+                        <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-primary/20 to-transparent rounded-bl-full"></div>
+                        <h3 className="text-xs font-bold text-slate-400 uppercase mb-3">高低切换</h3>
+                        <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                                <i className="fa-solid fa-industry text-slate-600 text-xs"></i>
+                                <span className="text-xs font-bold text-slate-700">反内卷 (供给侧)</span>
+                            </div>
+                            <p className="text-[8px] text-slate-400 pl-5">化工、金属、建材 (ROE改善)</p>
+                            
+                            <div className="flex items-center gap-2 mt-2">
+                                <i className="fa-solid fa-landmark text-slate-600 text-xs"></i>
+                                <span className="text-xs font-bold text-slate-700">政策刺激</span>
+                            </div>
+                            <p className="text-[8px] text-slate-400 pl-5">大金融、消费、地产</p>
+                        </div>
+                    </BentoItem>
+
+                    {/* 05. Allocation Chart (Full Width) */}
+                    <BentoItem className="col-span-2 flex items-center gap-4" delay={0.5}>
+                        <div className="w-1/3 relative">
+                            <canvas ref={chartRef}></canvas>
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <span className="text-[8px] font-bold text-slate-400">配置<br/>建议</span>
+                            </div>
+                        </div>
+                        <div className="w-2/3">
+                            <h3 className="text-lg font-black text-slate-800 mb-1">保守派策略</h3>
+                            <ul className="space-y-1">
+                                <li className="flex items-center gap-2 text-[10px] text-slate-500">
+                                    <span className="w-2 h-2 rounded-full bg-primary"></span>
+                                    <strong>高配传统/宽基</strong> (确定性)
+                                </li>
+                                <li className="flex items-center gap-2 text-[10px] text-slate-500">
+                                    <span className="w-2 h-2 rounded-full bg-accent"></span>
+                                    <strong>中配港/美科技</strong> (业绩)
+                                </li>
+                                <li className="flex items-center gap-2 text-[10px] text-slate-500">
+                                    <span className="w-2 h-2 rounded-full bg-slate-200"></span>
+                                    <strong>低配A股科技</strong> (仅做投机)
+                                </li>
+                            </ul>
+                        </div>
+                    </BentoItem>
+
+                    {/* 06. Class Ascension (Full Width Highlight) */}
+                    <BentoItem className="col-span-2 bg-gradient-to-r from-primary/5 to-white border-primary/20" delay={0.6}>
+                        <div className="flex items-start gap-4">
+                            <div className="bg-primary text-white w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/30">
+                                <i className="fa-solid fa-stairs text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-black text-slate-800 mb-1">阶层跃迁的思考</h3>
+                                <p className="text-[10px] font-bold text-slate-500 mb-2">
+                                    人生仅有的三次机会：早期下海、房地产、<span className="text-primary">本次资本市场</span>。
+                                </p>
+                                <p className="text-[10px] text-slate-400 leading-relaxed border-t border-primary/10 pt-2">
+                                    "普通人能守住父辈阶层、稳在当前台阶已属不易。不要为了强行跨越阶层而加过高杠杆，导致现有阶层滑落。"
+                                </p>
+                            </div>
+                        </div>
+                    </BentoItem>
+
+                    {/* Footer */}
+                    <motion.div 
+                        initial={{ opacity: 0 }} 
+                        animate={{ opacity: 1 }} 
+                        transition={{ delay: 0.8 }}
+                        className="col-span-2 mt-4 text-center pb-8"
+                    >
+                        <i className="fa-solid fa-quote-left text-slate-300 text-xl mb-2"></i>
+                        <p className="text-xs font-bold text-slate-600 italic">
+                            "自由的步伐(疯牛)是稀缺的，<br/>在管制中寻找确定性。"
+                        </p>
+                        <div className="mt-4 flex justify-center gap-1 opacity-50">
+                            <span className="w-1 h-1 rounded-full bg-slate-400"></span>
+                            <span className="w-1 h-1 rounded-full bg-slate-400"></span>
+                            <span className="w-1 h-1 rounded-full bg-slate-400"></span>
+                        </div>
+                    </motion.div>
+
+                </div>
+            );
+        };
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

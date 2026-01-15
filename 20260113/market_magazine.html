@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A股深度研报：持久战与商品联动</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#356BFD',
+                        secondary: '#EAEFFB',
+                        accent: '#FB9D0E',
+                        bg: '#FAFBFC',
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FAFBFC;
+            background-image: linear-gradient(#EAEFFB 1px, transparent 1px),
+                linear-gradient(90deg, #EAEFFB 1px, transparent 1px);
+            background-size: 30px 30px;
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+
+        .bento-card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 40px -10px rgba(53, 107, 253, 0.1);
+            border: 1px solid rgba(234, 239, 251, 1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .glass-tag {
+            background: rgba(53, 107, 253, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(53, 107, 253, 0.2);
+            color: #356BFD;
+        }
+
+        .big-text-gradient {
+            background: linear-gradient(135deg, #356BFD 0%, #254EDB 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .accent-gradient {
+            background: linear-gradient(135deg, #FB9D0E 0%, #E08700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .grid-bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at top right, rgba(53, 107, 253, 0.05), transparent 40%);
+            pointer-events: none;
+        }
+
+        /* Hide scrollbar for clean screenshot look */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+    </style>
+</head>
+
+<body class="max-w-[480px] mx-auto min-h-screen pb-12">
+
+    <!-- Header Section -->
+    <header class="p-6 pt-12 relative overflow-hidden">
+        <div
+            class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2">
+        </div>
+
+        <div class="flex items-center justify-between mb-4">
+            <span
+                class="bg-black text-white px-3 py-1 text-xs font-bold uppercase tracking-widest rounded-full">Strategic
+                Report</span>
+            <span class="text-gray-400 text-xs font-mono">2026.01.13</span>
+        </div>
+
+        <h1 class="text-4xl font-black leading-tight text-slate-900 mb-2">
+            A股<span class="text-primary">持久战</span>与<br>
+            <span class="text-accent">周期联动</span>
+        </h1>
+        <p class="text-slate-500 text-sm font-medium">
+            从毛选智慧看市场逻辑 · 牛市两手准备
+        </p>
+    </header>
+
+    <!-- Main Grid Layout -->
+    <main class="px-4 space-y-4">
+
+        <!-- Card 1: 下限 (Lower Bound) -->
+        <div class="bento-card p-6 col-span-1 relative">
+            <div class="grid-bg-overlay"></div>
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h2 class="text-slate-400 text-xs font-bold tracking-widest uppercase mb-1">MARKET LOWER BOUND</h2>
+                    <h3 class="text-lg font-bold text-slate-800">下看流动性</h3>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                    <i class="fa-solid fa-water text-lg"></i>
+                </div>
+            </div>
+
+            <div class="flex items-baseline gap-2">
+                <span class="text-5xl font-black big-text-gradient tracking-tighter">1.5</span>
+                <span class="text-xl font-bold text-slate-600">万亿</span>
+            </div>
+            <p class="text-xs text-slate-400 mt-2 font-mono border-l-2 border-primary/30 pl-3">
+                兵马未动，粮草先行。<br>中枢上移的基石。
+            </p>
+        </div>
+
+        <!-- Card 2: 上限 (Upper Bound) -->
+        <div class="bento-card p-6 bg-slate-900 text-white relative overflow-hidden">
+            <div class="absolute inset-0 opacity-20"
+                style="background-image: radial-gradient(#356BFD 1px, transparent 1px); background-size: 10px 10px;">
+            </div>
+            <div class="relative z-10 flex flex-col h-full justify-between">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2 class="text-white/50 text-xs font-bold tracking-widest uppercase mb-1">MARKET UPPER BOUND
+                        </h2>
+                        <h3 class="text-lg font-bold text-white">上看政策与题材</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white">
+                        <i class="fa-solid fa-rocket text-sm"></i>
+                    </div>
+                </div>
+
+                <div class="mt-6 space-y-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-1 h-8 bg-accent rounded-full"></div>
+                        <div>
+                            <div class="text-xs text-white/60">主要矛盾</div>
+                            <div class="font-bold text-lg">宏观政策预期</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-1 h-8 bg-primary rounded-full"></div>
+                        <div>
+                            <div class="text-xs text-white/60">进攻方向</div>
+                            <div class="font-bold text-lg">主线题材</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bento Row: Strategy -->
+        <div class="grid grid-cols-2 gap-4">
+            <!-- Commoner Strategy -->
+            <div class="bento-card p-5 flex flex-col justify-between h-48 bg-gradient-to-br from-white to-secondary/30">
+                <div>
+                    <h3 class="text-2xl font-black text-slate-800 mb-1">普通人</h3>
+                    <div class="glass-tag inline-block px-2 py-0.5 rounded text-[10px] font-bold">持久战</div>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved text-primary text-xs"></i>
+                        <span class="text-xs font-bold text-slate-700">深挖洞 · 选底限</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-wheat-awn text-primary text-xs"></i>
+                        <span class="text-xs font-bold text-slate-700">广积粮 · 靠定投</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-peace text-primary text-xs"></i>
+                        <span class="text-xs font-bold text-slate-700">不称霸 · 不择时</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expert Strategy -->
+            <div class="bento-card p-5 flex flex-col justify-between h-48 bg-white border-primary/20">
+                <div>
+                    <h3 class="text-2xl font-black text-slate-800 mb-1">能人</h3>
+                    <div
+                        class="glass-tag inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-accent/10 border-accent/20 text-accent">
+                        运动战</div>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-bolt text-accent text-xs"></i>
+                        <span class="text-xs font-bold text-slate-700">大胆假设 (萌芽)</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-microscope text-accent text-xs"></i>
+                        <span class="text-xs font-bold text-slate-700">小心求证 (分歧)</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-person-running text-accent text-xs"></i>
+                        <span class="text-xs font-bold text-slate-700">灵活撤退 (伪证)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Divider -->
+        <div class="py-4 flex items-center gap-4">
+            <div class="h-[1px] bg-slate-200 flex-1"></div>
+            <span class="text-xs font-black text-slate-300 tracking-[0.2em]">LINKAGE LOGIC</span>
+            <div class="h-[1px] bg-slate-200 flex-1"></div>
+        </div>
+
+        <!-- Logic Flow: Supply Side 2.0 -->
+        <div class="bento-card p-6">
+            <h2 class="text-slate-400 text-xs font-bold tracking-widest uppercase mb-4">底层逻辑：供给侧改革 2.0</h2>
+
+            <div class="flex flex-col gap-4 relative">
+                <!-- Step 1 -->
+                <div class="flex gap-4 items-center z-10">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center border border-slate-200 shrink-0">
+                        <i class="fa-solid fa-industry text-slate-400"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-slate-800">供给端：反内卷</h4>
+                        <p class="text-xs text-slate-500">产能出清 · 限制恶性竞争</p>
+                    </div>
+                </div>
+
+                <!-- Connector Line -->
+                <div
+                    class="absolute left-6 top-8 bottom-8 w-0.5 bg-gradient-to-b from-slate-200 via-primary/50 to-slate-200 -z-0">
+                </div>
+
+                <!-- Step 2 -->
+                <div class="flex gap-4 items-center z-10">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center border border-slate-200 shrink-0">
+                        <i class="fa-solid fa-city text-slate-400"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-slate-800">需求端：超级工程</h4>
+                        <p class="text-xs text-slate-500">城市更新 · 大水电 · 创造实物需求</p>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="flex gap-4 items-center z-10">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30 shrink-0">
+                        <i class="fa-solid fa-arrow-trend-up text-white"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-primary">传导结果</h4>
+                        <p class="text-xs text-slate-500">商品涨价 <i class="fa-solid fa-arrow-right text-[10px] mx-1"></i>
+                            国企利润 <i class="fa-solid fa-arrow-right text-[10px] mx-1"></i> A股估值</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ECharts Visualization -->
+            <div id="linkageChart" class="w-full h-32 mt-6"></div>
+        </div>
+
+        <!-- Alert Section -->
+        <div class="bento-card p-6 bg-slate-50 border-accent/20">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-accent text-xs font-bold uppercase"><i
+                        class="fa-solid fa-triangle-exclamation mr-1"></i> 狂热预警</span>
+                <span class="text-slate-400 text-[10px] font-mono">单日融资余额增量</span>
+            </div>
+            <div class="flex items-end gap-2 mb-4">
+                <span class="text-6xl font-black accent-gradient leading-none">1503</span>
+                <span class="text-xl font-bold text-slate-400 mb-1">亿</span>
+            </div>
+            <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                <div class="bg-accent h-full w-[95%] rounded-full opacity-80"></div>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-2 text-right">历史罕见数据 · 情绪高潮</p>
+        </div>
+
+        <!-- Strategy: Two Hands -->
+        <div class="grid grid-cols-1 gap-4">
+            <div class="bento-card p-6 relative overflow-hidden">
+                <div
+                    class="absolute right-0 top-0 w-32 h-32 bg-secondary rounded-full -mr-10 -mt-10 blur-2xl opacity-50">
+                </div>
+
+                <h2 class="text-lg font-black text-slate-800 mb-4 z-10 relative">牛市两手准备</h2>
+
+                <div class="space-y-4 relative z-10">
+                    <!-- Hand 1 -->
+                    <div
+                        class="flex items-center gap-4 bg-white/50 p-3 rounded-xl border border-white backdrop-blur-sm">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center text-green-600 font-bold shrink-0">
+                            攻
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-xs font-bold text-slate-500 uppercase">进攻 · 拥抱泡沫</div>
+                            <div class="font-bold text-slate-800">持有核心资产</div>
+                            <div class="text-[10px] text-slate-400">资源 · 红利 · 涨价预期</div>
+                        </div>
+                    </div>
+
+                    <!-- Hand 2 -->
+                    <div
+                        class="flex items-center gap-4 bg-white/50 p-3 rounded-xl border border-white backdrop-blur-sm">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center text-red-500 font-bold shrink-0">
+                            守
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-xs font-bold text-slate-500 uppercase">防守 · 底线思维</div>
+                            <div class="font-bold text-slate-800">利润提现 / 固化</div>
+                            <div class="text-[10px] text-slate-400">黄金 · 房产 · 消费</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Quote -->
+        <div class="py-8 text-center px-8">
+            <i class="fa-solid fa-quote-left text-primary/20 text-2xl mb-2"></i>
+            <p class="text-slate-600 font-bold text-sm leading-relaxed">
+                只有退潮了，才知道谁在裸泳。<br>
+                牛市不言顶，但人要做准备。
+            </p>
+            <div class="mt-4 w-8 h-1 bg-primary rounded-full mx-auto"></div>
+        </div>
+
+    </main>
+
+    <script>
+        // Initialize ECharts for Linkage
+        document.addEventListener('DOMContentLoaded', function () {
+            var chartDom = document.getElementById('linkageChart');
+            var myChart = echarts.init(chartDom);
+            var option;
+
+            option = {
+                animation: false, // Static for screenshot
+                grid: {
+                    top: 10,
+                    bottom: 20,
+                    left: 0,
+                    right: 0
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['供给收缩', '商品涨', '企业利', '估值修'],
+                    show: true,
+                    axisLine: { show: false },
+                    axisTick: { show: false },
+                    axisLabel: { color: '#94a3b8', fontSize: 10, interval: 0 }
+                },
+                yAxis: {
+                    type: 'value',
+                    show: false
+                },
+                series: [
+                    {
+                        data: [30, 50, 70, 90],
+                        type: 'line',
+                        smooth: true,
+                        // symbol: 'none',
+                        lineStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                                { offset: 0, color: '#93C5FD' },
+                                { offset: 1, color: '#356BFD' }
+                            ]),
+                            width: 3
+                        },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: 'rgba(53, 107, 253, 0.2)' },
+                                { offset: 1, color: 'rgba(53, 107, 253, 0)' }
+                            ])
+                        },
+                        symbolSize: 6,
+                        itemStyle: {
+                            color: '#356BFD',
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }
+                    }
+                ]
+            };
+
+            myChart.setOption(option);
+        });
+    </script>
+</body>
+
+</html>

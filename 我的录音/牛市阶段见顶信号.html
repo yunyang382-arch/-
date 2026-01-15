@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>牛市见顶信号与策略 - 深度笔记</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;500;700;900&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#356BFD',
+                        secondary: '#EAEFFB',
+                        accent: '#FB9D0E',
+                        bg: '#FAFBFC',
+                        dark: '#1e293b'
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'grid-pattern': "linear-gradient(to right, #E2E8F0 1px, transparent 1px), linear-gradient(to bottom, #E2E8F0 1px, transparent 1px)",
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FAFBFC;
+            background-size: 40px 40px;
+            font-family: 'Noto Sans SC', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .bg-tech-grid {
+            background-image: linear-gradient(#E5E7EB 1px, transparent 1px),
+            linear-gradient(90deg, #E5E7EB 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .bento-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 40px -10px rgba(53, 107, 253, 0.1);
+        }
+
+        .text-gradient-primary {
+            background: linear-gradient(135deg, #356BFD 0%, #172554 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .text-gradient-accent {
+            background: linear-gradient(135deg, #FB9D0E 0%, #B45309 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Hide scrollbar */
+        ::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-tech-grid min-h-screen text-slate-800 pb-20">
+
+    <div id="root" class="max-w-[480px] mx-auto relative overflow-hidden bg-[#FAFBFC]/90 shadow-2xl min-h-screen"></div>
+
+    <script type="module">
+        const { motion } = window.Motion;
+        const { createRoot } = window.ReactDOM;
+        const { createElement: h, useEffect, useRef } = window.React;
+
+        const BentoItem = ({ children, className, delay }) => {
+            return h(motion.div, {
+                initial: { opacity: 0, y: 50 },
+                animate: { opacity: 1, y: 0 },
+                transition: { duration: 0.8, delay: delay, ease: [0.16, 1, 0.3, 1] },
+                className: `bento-card rounded-[2rem] p-5 relative overflow-hidden ${className}`
+            }, children);
+        };
+
+        const App = () => {
+            const chartRef = useRef(null);
+
+            useEffect(() => {
+                if (chartRef.current) {
+                    const ctx = chartRef.current.getContext('2d');
+                    new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['底仓 (4-7成)', '滚动仓 (2-3成)'],
+                            datasets: [{
+                                data: [70, 30],
+                                backgroundColor: ['#356BFD', '#FB9D0E'],
+                                borderWidth: 0,
+                                hoverOffset: 4
+                            }]
+                        },
+                        options: {
+                            cutout: '75%',
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                }
+            }, []);
+
+            return h('div', { className: 'grid grid-cols-2 gap-3 p-4 pt-10' }, [
+                
+                // Header
+                h(motion.header, {
+                    initial: { opacity: 0 },
+                    animate: { opacity: 1 },
+                    transition: { duration: 1 },
+                    className: "col-span-2 mb-4 px-2"
+                }, [
+                    h('div', { className: "flex items-center gap-2 mb-2" }, [
+                        h('span', { className: "w-2 h-2 rounded-full bg-accent" }),
+                        h('span', { className: "text-xs font-bold tracking-[0.2em] text-slate-400 uppercase" }, "MARKET STRATEGY")
+                    ]),
+                    h('h1', { className: "text-5xl font-black leading-[0.9] text-slate-900 mb-2" }, [
+                        "牛市", h('br'),
+                        h('span', { className: "text-gradient-primary" }, "见顶信号"),
+                        h('span', { className: "text-3xl font-light text-slate-300 ml-2" }, "&"),
+                    ]),
+                    h('p', { className: "text-lg font-bold text-slate-600 border-l-4 border-primary pl-4 mt-4" }, [
+                        "胜率 vs 赔率", h('br'),
+                        h('span', { className: "text-xs font-normal text-slate-400" }, "交易体系与市场温度衡量")
+                    ])
+                ]),
+
+                // 01. Mindset: Efficiency & Despise Chain (Full Width)
+                h(BentoItem, { className: "col-span-2", delay: 0.1 }, [
+                    h('div', { className: "absolute top-0 right-0 w-40 h-40 bg-secondary rounded-full -mr-10 -mt-10 blur-3xl opacity-50" }),
+                    h('div', { className: "flex justify-between items-start mb-3" }, [
+                        h('h2', { className: "text-xl font-black text-slate-800" }, [
+                            h('i', { className: "fa-solid fa-brain text-accent mr-2" }),
+                            "牛市心态"
+                        ]),
+                        h('span', { className: "text-4xl font-black text-slate-100" }, "01")
+                    ]),
+                    h('div', { className: "grid grid-cols-2 gap-4" }, [
+                        h('div', {}, [
+                            h('h3', { className: "text-xs font-bold text-slate-500 mb-1" }, "鄙视链"),
+                            h('p', { className: "text-[10px] text-slate-400 leading-tight" }, "价投看不起投机，但牛市恰恰是投机盛宴。"),
+                            h('div', { className: "mt-2 px-2 py-1 bg-slate-100 rounded text-[10px] text-slate-600 inline-block" }, "打不过就加入")
+                        ]),
+                        h('div', {}, [
+                            h('h3', { className: "text-xs font-bold text-slate-500 mb-1" }, "最高效"),
+                            h('p', { className: "text-[10px] text-slate-400 leading-tight" }, "龙头短线投机效率最高，但风险也最大。"),
+                            h('div', { className: "mt-2 px-2 py-1 bg-accent/10 text-accent rounded text-[10px] font-bold inline-block" }, "拒绝满底诱惑")
+                        ])
+                    ])
+                ]),
+
+                // 02. Strategy Trio (Vertical Large)
+                h(BentoItem, { className: "col-span-1 row-span-2 flex flex-col justify-between bg-slate-900 text-white border-none", delay: 0.2 }, [
+                    h('div', {}, [
+                        h('h3', { className: "text-xs font-bold text-slate-400 uppercase tracking-widest mb-4" }, "TRADING STYLE"),
+                        h('div', { className: "space-y-6" }, [
+                            h('div', {}, [
+                                h('div', { className: "flex items-center gap-2 mb-1" }, [
+                                    h('i', { className: "fa-solid fa-bolt text-accent" }),
+                                    h('span', { className: "font-black text-lg" }, "胜率型")
+                                ]),
+                                h('p', { className: "text-[10px] text-slate-400" }, "高频、做T、量化。"),
+                                h('p', { className: "text-[10px] text-slate-300 font-bold" }, "快乐赚小钱 (多巴胺)")
+                            ]),
+                            h('div', {}, [
+                                h('div', { className: "flex items-center gap-2 mb-1" }, [
+                                    h('i', { className: "fa-solid fa-hourglass-half text-primary" }),
+                                    h('span', { className: "font-black text-lg" }, "赔率型")
+                                ]),
+                                h('p', { className: "text-[10px] text-slate-400" }, "趋势持有，忍受回撤。"),
+                                h('p', { className: "text-[10px] text-slate-300 font-bold" }, "反人性赚大钱 (如老王)")
+                            ]),
+                             h('div', { className: "p-3 bg-white/10 rounded-xl backdrop-blur-sm" }, [
+                                h('span', { className: "block text-[10px] text-accent font-bold mb-1" }, "混合型 (推荐)"),
+                                h('p', { className: "text-[10px] text-white leading-tight" }, "趋势中的波段：低吸 -> 突破加仓 -> 滞涨减仓")
+                            ])
+                        ])
+                    ]),
+                ]),
+
+                // 03. Top Signals (Square)
+                h(BentoItem, { className: "col-span-1", delay: 0.3 }, [
+                    h('h3', { className: "text-sm font-black text-slate-800 mb-3" }, "见顶信号"),
+                    h('ul', { className: "space-y-2" }, [
+                        h('li', { className: "flex items-center gap-2" }, [
+                            h('i', { className: "fa-solid fa-circle-xmark text-slate-300 text-xs" }),
+                            h('span', { className: "text-[10px] font-bold text-slate-500" }, "流动性枯竭")
+                        ]),
+                        h('li', { className: "flex items-center gap-2" }, [
+                            h('i', { className: "fa-regular fa-circle-check text-accent text-xs" }),
+                            h('span', { className: "text-[10px] font-bold text-slate-500" }, "机构集体唱多")
+                        ]),
+                         h('li', { className: "flex items-center gap-2" }, [
+                            h('i', { className: "fa-solid fa-circle-xmark text-slate-300 text-xs" }),
+                            h('span', { className: "text-[10px] font-bold text-slate-500" }, "杠杆持续减少")
+                        ]),
+                         h('li', { className: "flex items-center gap-2" }, [
+                            h('i', { className: "fa-solid fa-circle-xmark text-slate-300 text-xs" }),
+                            h('span', { className: "text-[10px] font-bold text-slate-500" }, "龙头集体A杀")
+                        ])
+                    ]),
+                    h('div', { className: "mt-3 pt-2 border-t border-slate-100" }, [
+                        h('p', { className: "text-[10px] text-primary font-black text-center" }, "当前尚未满足")
+                    ])
+                ]),
+
+                // 04. Position Chart (Square)
+                h(BentoItem, { className: "col-span-1 bg-white", delay: 0.4 }, [
+                    h('div', { className: "absolute inset-0 flex flex-col items-center justify-center pointer-events-none" }, [
+                        h('span', { className: "text-2xl font-black text-slate-800" }, "7:3"),
+                        h('span', { className: "text-[8px] text-slate-400" }, "仓位配比")
+                    ]),
+                    h('canvas', { ref: chartRef, className: "relative z-10" }),
+                    h('div', { className: "mt-2 text-center" }, [
+                        h('p', { className: "text-[10px] text-slate-500" }, "滚动操作，攻守兼备")
+                    ])
+                ]),
+
+                // 05. Specific Sectors (Full Width)
+                h(BentoItem, { className: "col-span-2 border-l-4 border-l-accent", delay: 0.5 }, [
+                    h('div', { className: "flex justify-between items-center mb-2" }, [
+                        h('h3', { className: "text-lg font-black text-slate-800" }, "关注方向"),
+                        h('i', { className: "fa-solid fa-map-location-dot text-slate-200 text-2xl" })
+                    ]),
+                    h('div', { className: "grid grid-cols-3 gap-2" }, [
+                        h('div', { className: "col-span-2" }, [
+                            h('h4', { className: "text-sm font-bold text-accent" }, "基建/水电 (西藏)"),
+                            h('p', { className: "text-[10px] text-slate-400 mt-1" }, "结构性炒作，类似当年雄安但级别较小。"),
+                            h('p', { className: "text-[10px] text-slate-400" }, "明牌博弈，拼手速。")
+                        ]),
+                        h('div', { className: "col-span-1 pl-2 border-l border-slate-100" }, [
+                            h('h4', { className: "text-sm font-bold text-primary" }, "红利防御"),
+                            h('p', { className: "text-[10px] text-slate-400 mt-1" }, "平滑波动"),
+                            h('p', { className: "text-[10px] text-slate-400" }, "牛市标配")
+                        ])
+                    ])
+                ]),
+
+                // 06. Market Heat (Comparison)
+                h(BentoItem, { className: "col-span-2 bg-gradient-to-r from-white to-secondary/50", delay: 0.6 }, [
+                    h('h3', { className: "text-sm font-black text-slate-800 mb-3" }, "外围市场"),
+                    h('div', { className: "flex gap-4" }, [
+                        h('div', { className: "flex-1 p-3 bg-white rounded-xl shadow-sm" }, [
+                            h('div', { className: "flex items-center gap-2 mb-1" }, [
+                                h('span', { className: "text-xl" }, "🇺🇸"),
+                                h('span', { className: "text-xs font-bold text-slate-700" }, "美股")
+                            ]),
+                            h('p', { className: "text-[10px] text-slate-500" }, "技术回调 = 倒车接人"),
+                            h('p', { className: "text-[10px] text-primary font-bold" }, "AI逻辑未变")
+                        ]),
+                         h('div', { className: "flex-1 p-3 bg-white rounded-xl shadow-sm opacity-60" }, [
+                            h('div', { className: "flex items-center gap-2 mb-1" }, [
+                                h('span', { className: "text-xl" }, "🇭🇰"),
+                                h('span', { className: "text-xs font-bold text-slate-700" }, "港股")
+                            ]),
+                            h('p', { className: "text-[10px] text-slate-500" }, "AH溢价高位压力"),
+                            h('p', { className: "text-[10px] text-slate-400 font-bold" }, "需待修复")
+                        ])
+                    ])
+                ]),
+
+                // Footer Quote
+                h(motion.div, {
+                    initial: { opacity: 0 },
+                    animate: { opacity: 1 },
+                    transition: { delay: 0.8 },
+                    className: "col-span-2 mt-4 text-center"
+                }, [
+                    h('i', { className: "fa-solid fa-quote-left text-slate-300 text-xl mb-2" }),
+                    h('p', { className: "text-sm font-bold text-slate-600 italic" }, "认清自我：做不了赔率型，就老实做胜率型。"),
+                    h('p', { className: "text-[10px] text-slate-400 mt-2 tracking-widest uppercase" }, "Generated by AI Analysis")
+                ])
+
+            ]);
+        };
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(h(App));
+    </script>
+</body>
+</html>
